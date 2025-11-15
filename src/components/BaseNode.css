@@ -1,0 +1,142 @@
+.base-node {
+  min-width: 180px;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.base-node.selected {
+  border-color: #1976d2;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.base-node.collapsed {
+  min-width: 120px;
+}
+
+/* 头部样式 */
+.base-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 6px 6px 0 0;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.base-node.selected .base-node-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+}
+
+.base-node-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.base-node-collapse-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  margin-left: 8px;
+}
+
+.base-node-collapse-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.base-node-collapse-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 内容区域样式 */
+.base-node-content {
+  padding: 12px;
+  min-height: 60px;
+  background: #fafafa;
+  border-radius: 0 0 6px 6px;
+}
+
+.base-node-empty {
+  color: #999;
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.base-node-data {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.base-node-data-item {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.base-node-data-key {
+  color: #666;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.base-node-data-value {
+  color: #333;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* 端点样式 */
+.base-node-handle {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  background: #667eea;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.base-node-handle:hover {
+  width: 14px;
+  height: 14px;
+  background: #1976d2;
+}
+
+.base-node-handle-target {
+  left: -5px;
+}
+
+.base-node-handle-source {
+  right: -5px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .base-node {
+    min-width: 150px;
+  }
+
+  .base-node-header {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .base-node-content {
+    padding: 10px;
+  }
+}
