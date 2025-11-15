@@ -20,7 +20,7 @@ A foundational node component with built-in features:
 ## Installation
 
 ```bash
-npm install @your-scope/react-flow-components
+npm install @kingpa/fast-flow
 ```
 
 ## Usage
@@ -35,7 +35,7 @@ import {
   Flavor, 
   BaseNode, 
   createCustomNode 
-} from '@your-scope/react-flow-components';
+} from '@kingpa/fast-flow';
 import 'reactflow/dist/style.css';
 
 // 1. Create and register custom nodes

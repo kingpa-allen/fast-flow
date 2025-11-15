@@ -219,7 +219,7 @@ class CustomRegisterHelper extends RegisterHelper {
 
 1. **Singleton Pattern**: Use provided singleton instances for global state
    ```typescript
-   import { registerHelper, flavor } from '@your-scope/react-flow-components';
+   import { registerHelper, flavor } from '@kingpa/fast-flow';
    ```
 
 2. **Type Safety**: Leverage TypeScript types for custom nodes

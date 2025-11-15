@@ -3,7 +3,7 @@
 ## 1. 安装 / Installation
 
 ```bash
-npm install @your-scope/react-flow-components react reactflow
+npm install @kingpa/fast-flow react reactflow
 ```
 
 ## 2. 基础使用 / Basic Usage
@@ -13,7 +13,7 @@ npm install @your-scope/react-flow-components react reactflow
 ```tsx
 import React from 'react';
 import ReactFlow from 'reactflow';
-import { registerHelper, BaseNode } from '@your-scope/react-flow-components';
+import { registerHelper, BaseNode } from '@kingpa/fast-flow';
 import 'reactflow/dist/style.css';
 
 // 注册基础节点
@@ -45,7 +45,7 @@ export default App;
 ## 3. 创建自定义节点 / Create Custom Node
 
 ```tsx
-import { createCustomNode, BaseNodeData } from '@your-scope/react-flow-components';
+import { createCustomNode, BaseNodeData } from '@kingpa/fast-flow';
 
 // 定义节点数据类型
 interface MyNodeData extends BaseNodeData {
@@ -91,7 +91,7 @@ const nodes = [
 ## 4. 数据导入导出 / Import/Export Data
 
 ```tsx
-import { flavor } from '@your-scope/react-flow-components';
+import { flavor } from '@kingpa/fast-flow';
 
 function DataManager({ nodes, edges }) {
   // 导出为 JSON
@@ -149,7 +149,7 @@ import {
   flavor, 
   BaseNode,
   createCustomNode 
-} from '@your-scope/react-flow-components';
+} from '@kingpa/fast-flow';
 import 'reactflow/dist/style.css';
 
 // 创建自定义节点

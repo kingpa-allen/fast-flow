@@ -1,12 +1,14 @@
 // Core classes
-export { RegisterHelper, registerHelper } from './core/RegisterHelper';
+export { RegisterHelper } from './core/RegisterHelper';
 export { BaseFlavor, Flavor, flavor } from './core/Flavor';
 
 // Components
-export { BaseNode, createCustomNode } from './components/BaseNode';
-export type { BaseNodeProps } from './components/BaseNode';
+export { BaseNode } from './components/BaseNode';
+export type { BaseNodeProps, BaseNodeState } from './components/BaseNode';
 export { Flow, FlowCanvas } from './components/Flow';
-export type { FlowProps } from './components/Flow';
+export type { FlowProps, FlowMode } from './components/Flow';
+export { NodeLibraryPanel } from './components/NodeLibraryPanel';
+export type { NodeLibraryPanelProps } from './components/NodeLibraryPanel';
 
 // Hooks
 export { useFlow } from './hooks/useFlow';

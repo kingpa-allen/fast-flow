@@ -1,69 +1,137 @@
 import React, { useState } from 'react';
+import { Form, Input, Select, Button } from 'antd';
+import { AppstoreOutlined, FunctionOutlined, ExportOutlined } from '@ant-design/icons';
+import 'antd/dist/reset.css';
 import {
   RegisterHelper,
   Flavor,
   BaseNode,
-  createCustomNode,
-  BaseNodeData,
   FlowCanvas,
   useFlow,
-} from '../dist/index.esm.js';
-
-// 创建 RegisterHelper 实例
-const registerHelper = new RegisterHelper();
+} from '../../dist/index.esm.js';
 
 // 创建 Flavor 实例
 const flavor = new Flavor();
 
-// 创建自定义节点 1: 数据处理节点
-interface DataNodeData extends BaseNodeData {
-  operation?: string;
-  input?: string;
-}
+// 创建自定义节点 1: 数据处理节点（继承 BaseNode）
+class DataProcessNode extends BaseNode {
+  // 启用设置面板
+  protected hasSettingsForm(): boolean {
+    return true;
+  }
 
-const DataProcessNode = createCustomNode<DataNodeData>(
-  (props) => {
+  // 渲染设置表单
+  protected renderSettingsForm(): React.ReactNode {
+    const { settingsData } = this.state;
+
+    return (
+      <Form
+        layout="vertical"
+        initialValues={{
+          operation: settingsData.operation || 'Transform',
+          input: settingsData.input || '',
+        }}
+      >
+        <Form.Item label="Operation Type" name="operation">
+          <Select
+            value={settingsData.operation || 'Transform'}
+            onChange={(value) => this.updateSettingsData('operation', value)}
+          >
+            <Select.Option value="Transform">Transform</Select.Option>
+            <Select.Option value="Filter">Filter</Select.Option>
+            <Select.Option value="Aggregate">Aggregate</Select.Option>
+            <Select.Option value="Map">Map</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item label="Input Data" name="input">
+          <Input.TextArea
+            rows={4}
+            value={settingsData.input || ''}
+            onChange={(e) => this.updateSettingsData('input', e.target.value)}
+            placeholder="Enter input data..."
+          />
+        </Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+            <Button onClick={this.handleCloseSettings}>
+              Cancel
+            </Button>
+            <Button type="primary" onClick={this.handleSaveSettings}>
+              Save
+            </Button>
+          </div>
+        </Form.Item>
+      </Form>
+    );
+  }
+
+  protected renderContent(): React.ReactNode {
+    const { data } = this.props;
     return (
       <div style={{ padding: '8px' }}>
         <div style={{ marginBottom: '6px' }}>
-          <strong>Operation:</strong> {props.data.operation || 'None'}
+          <strong>Operation:</strong> {data.operation || 'None'}
         </div>
         <div>
-          <strong>Input:</strong> {props.data.input || 'No data'}
+          <strong>Input:</strong> {data.input || 'No data'}
         </div>
       </div>
     );
-  },
-  {
-    showHeader: true,
-    collapsible: true,
-    className: 'data-process-node',
   }
-);
 
-// 创建自定义节点 2: 输出节点
-const OutputNode = createCustomNode(
-  (props) => {
+  protected getClassName(): string {
+    return 'data-process-node';
+  }
+}
+
+// 创建自定义节点 2: 输出节点（继承 BaseNode）
+class OutputNode extends BaseNode {
+  protected renderContent(): React.ReactNode {
+    const { data } = this.props;
     return (
       <div style={{ padding: '8px', color: '#2e7d32' }}>
         <div>✓ Ready to output</div>
         <div style={{ fontSize: '12px', marginTop: '4px' }}>
-          {props.data.format || 'JSON'}
+          {data.format || 'JSON'}
         </div>
       </div>
     );
-  },
-  {
-    showHeader: true,
-    collapsible: true,
-    className: 'output-node',
   }
-);
+
+  protected getClassName(): string {
+    return 'output-node';
+  }
+}
 
 // 注册节点类型
-registerHelper.register('baseNode', BaseNode, { label: 'Base Node' });
-registerHelper.register('dataProcess', DataProcessNode);
-registerHelper.register('output', OutputNode);
+RegisterHelper.register(
+  'baseNode',
+  BaseNode,
+  { label: 'Base Node' },
+  <AppstoreOutlined />,
+  'Basic node component with header and collapse'
+);
+RegisterHelper.register(
+  'dataProcess',
+  DataProcessNode,
+  {
+    label: 'Data Process',
+    operation: 'Transform',
+    input: '',
+  },
+  <FunctionOutlined />,
+  'Process and transform data'
+);
+RegisterHelper.register(
+  'output',
+  OutputNode,
+  {
+    label: 'Output',
+    format: 'JSON',
+  },
+  <ExportOutlined />,
+  'Output result in various formats'
+);
 
 // 初始节点和边
 const initialNodes = [
@@ -93,15 +161,12 @@ const initialEdges = [
 ];
 
 function App() {
-  const { nodes, edges, addNode, updateNodeData } = useFlow({
+  const { nodes, edges, addEdge, setNodes, setEdges } = useFlow({
     initialNodes,
     initialEdges,
   });
 
   const [exportedData, setExportedData] = useState<string>('');
-
-
-
   // 导出数据
   const handleExport = () => {
     const json = flavor.exportToJSON(nodes, edges, {
@@ -112,91 +177,25 @@ function App() {
     console.log('Exported Data:', json);
   };
 
-  // 添加新节点
-  const handleAddNode = () => {
-    const newNode = {
-      id: `${nodes.length + 1}`,
-      type: 'baseNode',
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
-      data: { label: `New Node ${nodes.length + 1}` },
-    };
-    addNode(newNode);
-  };
-
   return (
-    <div style={{ width: '100vw', height: '100vh', display: 'flex' }}>
-      {/* 工具栏 */}
-      <div
-        style={{
-          width: '300px',
-          padding: '20px',
-          background: '#f5f5f5',
-          borderRight: '1px solid #ddd',
-          overflow: 'auto',
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <FlowCanvas
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={setNodes}
+        onEdgesChange={setEdges}
+        onConnect={(connection) => {
+          const newEdge = {
+            id: `e${connection.source}-${connection.target}`,
+            ...connection,
+          };
+          addEdge(newEdge);
         }}
-      >
-        <h2 style={{ marginTop: 0 }}>React Flow Components Demo</h2>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h3>Actions</h3>
-          <button
-            onClick={handleAddNode}
-            style={{
-              padding: '8px 16px',
-              marginRight: '8px',
-              marginBottom: '8px',
-            }}
-          >
-            Add Node
-          </button>
-          <button
-            onClick={handleExport}
-            style={{
-              padding: '8px 16px',
-              marginBottom: '8px',
-            }}
-          >
-            Export Data
-          </button>
-        </div>
-
-        <div>
-          <h3>Registered Nodes</h3>
-          <ul style={{ paddingLeft: '20px' }}>
-            {registerHelper.getAllConfigs().map((config) => (
-              <li key={config.type}>{config.type}</li>
-            ))}
-          </ul>
-        </div>
-
-        {exportedData && (
-          <div>
-            <h3>Exported Data</h3>
-            <textarea
-              value={exportedData}
-              onChange={(e) => setExportedData(e.target.value)}
-              style={{
-                width: '100%',
-                height: '200px',
-                fontFamily: 'monospace',
-                fontSize: '12px',
-              }}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Flow 画布 */}
-      <div style={{ flex: 1 }}>
-        <FlowCanvas
-          registerHelper={registerHelper}
-          initialNodes={nodes}
-          initialEdges={edges}
-          showControls={true}
-          showMiniMap={true}
-          showBackground={true}
-        />
-      </div>
+        mode="edit"
+        showControls={true}
+        showMiniMap={true}
+        showBackground={true}
+      />
     </div>
   );
 }

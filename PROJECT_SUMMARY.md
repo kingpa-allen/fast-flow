@@ -57,7 +57,7 @@ flow/
 
 **使用示例**:
 ```typescript
-import { RegisterHelper, BaseNode } from '@your-scope/react-flow-components';
+import { RegisterHelper, BaseNode } from '@kingpa/fast-flow';
 
 const registerHelper = new RegisterHelper();
 
@@ -82,7 +82,7 @@ registerHelper.register('myNode', BaseNode, { label: 'My Node' });
 
 **使用示例**:
 ```typescript
-import { Flavor } from '@your-scope/react-flow-components';
+import { Flavor } from '@kingpa/fast-flow';
 
 const flavor = new Flavor();
 
@@ -116,7 +116,7 @@ registerHelper.register('baseNode', BaseNode);
 
 2. **使用 createCustomNode 创建自定义节点**:
 ```typescript
-import { createCustomNode } from '@your-scope/react-flow-components';
+import { createCustomNode } from '@kingpa/fast-flow';
 
 const MyCustomNode = createCustomNode(
   (props) => (
@@ -176,7 +176,7 @@ import {
   RegisterHelper, 
   Flavor, 
   BaseNode 
-} from '@your-scope/react-flow-components';
+} from '@kingpa/fast-flow';
 
 const registerHelper = new RegisterHelper();
 registerHelper.register('baseNode', BaseNode);
@@ -205,7 +205,7 @@ const App = () => {
 1. 更新 `package.json` 中的包名：
    ```json
    {
-     "name": "@your-scope/react-flow-components"
+     "name": "@kingpa/fast-flow"
    }
    ```
 

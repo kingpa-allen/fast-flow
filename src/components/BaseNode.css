@@ -1,5 +1,6 @@
 .base-node {
   min-width: 180px;
+  max-width: 280px;
   background: #ffffff;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
@@ -29,6 +30,12 @@
   font-size: 14px;
 }
 
+.base-node-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .base-node.selected .base-node-header {
   background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
 }
@@ -49,14 +56,29 @@
   padding: 4px 8px;
   border-radius: 4px;
   transition: background 0.2s ease;
-  margin-left: 8px;
 }
 
-.base-node-collapse-btn:hover {
+.base-node-settings-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.base-node-collapse-btn:hover,
+.base-node-settings-btn:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.base-node-collapse-btn:active {
+.base-node-collapse-btn:active,
+.base-node-settings-btn:active {
   background: rgba(255, 255, 255, 0.3);
 }
 
@@ -139,4 +161,179 @@
   .base-node-content {
     padding: 10px;
   }
+}
+
+/* 设置面板样式 */
+.base-node-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 90;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.base-node-settings-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 320px;
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  animation: slideInFromRight 0.3s ease;
+  z-index: 100;
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.base-node-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.base-node-settings-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.base-node-settings-close {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.base-node-settings-close:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.base-node-settings-body {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.base-node-settings-empty {
+  text-align: center;
+  color: #999;
+  padding: 30px 16px;
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* 表单样式 */
+.base-node-form-group {
+  margin-bottom: 12px;
+}
+
+.base-node-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.base-node-form-label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #333;
+  font-size: 12px;
+}
+
+.base-node-form-input,
+.base-node-form-textarea,
+.base-node-form-select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.base-node-form-input:focus,
+.base-node-form-textarea:focus,
+.base-node-form-select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+.base-node-form-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.base-node-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.base-node-form-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.base-node-form-button-primary {
+  background: #1976d2;
+  color: white;
+}
+
+.base-node-form-button-primary:hover {
+  background: #1565c0;
+}
+
+.base-node-form-button-secondary {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.base-node-form-button-secondary:hover {
+  background: #e0e0e0;
+  color: #333;
 }

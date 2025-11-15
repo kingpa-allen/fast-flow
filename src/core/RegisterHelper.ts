@@ -3,17 +3,12 @@ import { NodeProps } from 'reactflow';
 import { NodeConfig } from '../types';
 
 /**
- * RegisterHelper - 用于动态注册画布中的节点组件
- * Dynamically register node components for the canvas
+ * RegisterHelper - 用于动态注册画布中的节点组件（静态类）
+ * Dynamically register node components for the canvas (Static Class)
  */
 export class RegisterHelper {
-  private nodeTypes: Map<string, ComponentType<NodeProps>>;
-  private nodeConfigs: Map<string, NodeConfig>;
-
-  constructor() {
-    this.nodeTypes = new Map();
-    this.nodeConfigs = new Map();
-  }
+  private static nodeTypes: Map<string, ComponentType<NodeProps>> = new Map();
+  private static nodeConfigs: Map<string, NodeConfig> = new Map();
 
   /**
    * 注册一个节点组件
@@ -21,11 +16,15 @@ export class RegisterHelper {
    * @param type - 节点类型标识
    * @param component - React组件
    * @param defaultData - 默认数据
+   * @param icon - 节点图标
+   * @param description - 节点描述
    */
-  register(
+  static register(
     type: string,
     component: ComponentType<NodeProps>,
-    defaultData?: Record<string, any>
+    defaultData?: Record<string, any>,
+    icon?: React.ReactNode,
+    description?: string
   ): void {
     if (this.nodeTypes.has(type)) {
       console.warn(`Node type "${type}" is already registered. Overwriting...`);
@@ -36,6 +35,8 @@ export class RegisterHelper {
       type,
       component,
       defaultData,
+      icon,
+      description,
     });
   }
 
@@ -44,7 +45,7 @@ export class RegisterHelper {
    * Register multiple node components
    * @param configs - 节点配置数组
    */
-  registerBatch(configs: NodeConfig[]): void {
+  static registerBatch(configs: NodeConfig[]): void {
     configs.forEach(({ type, component, defaultData }) => {
       this.register(type, component, defaultData);
     });
@@ -55,7 +56,7 @@ export class RegisterHelper {
    * Unregister a node component
    * @param type - 节点类型标识
    */
-  unregister(type: string): boolean {
+  static unregister(type: string): boolean {
     const hasType = this.nodeTypes.has(type);
     this.nodeTypes.delete(type);
     this.nodeConfigs.delete(type);
@@ -66,7 +67,7 @@ export class RegisterHelper {
    * 获取所有已注册的节点类型
    * Get all registered node types
    */
-  getNodeTypes(): Record<string, ComponentType<NodeProps>> {
+  static getNodeTypes(): Record<string, ComponentType<NodeProps>> {
     const types: Record<string, ComponentType<NodeProps>> = {};
     this.nodeTypes.forEach((component, type) => {
       types[type] = component;
@@ -79,7 +80,7 @@ export class RegisterHelper {
    * Get node configuration
    * @param type - 节点类型标识
    */
-  getConfig(type: string): NodeConfig | undefined {
+  static getConfig(type: string): NodeConfig | undefined {
     return this.nodeConfigs.get(type);
   }
 
@@ -87,7 +88,7 @@ export class RegisterHelper {
    * 获取所有节点配置
    * Get all node configurations
    */
-  getAllConfigs(): NodeConfig[] {
+  static getAllConfigs(): NodeConfig[] {
     return Array.from(this.nodeConfigs.values());
   }
 
@@ -96,7 +97,7 @@ export class RegisterHelper {
    * Check if node type is registered
    * @param type - 节点类型标识
    */
-  isRegistered(type: string): boolean {
+  static isRegistered(type: string): boolean {
     return this.nodeTypes.has(type);
   }
 
@@ -105,7 +106,7 @@ export class RegisterHelper {
    * Get node component
    * @param type - 节点类型标识
    */
-  getComponent(type: string): ComponentType<NodeProps> | undefined {
+  static getComponent(type: string): ComponentType<NodeProps> | undefined {
     return this.nodeTypes.get(type);
   }
 
@@ -113,12 +114,8 @@ export class RegisterHelper {
    * 清空所有注册的节点
    * Clear all registered nodes
    */
-  clear(): void {
+  static clear(): void {
     this.nodeTypes.clear();
     this.nodeConfigs.clear();
   }
 }
-
-// 导出单例实例
-// Export singleton instance
-export const registerHelper = new RegisterHelper();
