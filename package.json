@@ -1,5 +1,5 @@
 {
-  "name": "@kingpa/fast-flow",
+  "name": "@kingpa-allen/fast-flow",
   "version": "1.0.0",
   "type": "module",
   "description": "A React Flow component library with RegisterHelper, Flavor data converter, and BaseNode with collapse functionality",
@@ -13,6 +13,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "demo": "npm run build && vite",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -24,11 +25,15 @@
     "graph",
     "component"
   ],
-  "author": "",
+  "author": "kingpa-allen",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "your-repository-url"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "peerDependencies": {
     "antd": "^5.28.1",
