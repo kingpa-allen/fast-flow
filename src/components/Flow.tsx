@@ -76,14 +76,61 @@ export interface FlowProps {
 /**
  * 使用 Dagre 算法自动布局节点
  * Auto layout nodes using Dagre algorithm
+ * 
+ * @param nodes - 节点数组
+ * @param edges - 边数组
+ * @param direction - 布局方向 ('TB' | 'LR')
+ * @param getDimensions - 获取节点实际尺寸的函数
  */
-const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
+const getLayoutedElements = (
+  nodes: Node[], 
+  edges: Edge[], 
+  direction = 'TB',
+  getDimensions?: (nodeId: string) => { width: number; height: number } | null
+) => {
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: direction });
+  // Increase spacing to prevent overlaps
+  dagreGraph.setGraph({ 
+    rankdir: direction, 
+    nodesep: 80,   // Horizontal spacing between nodes (increased from 50)
+    ranksep: 150,  // Vertical spacing between ranks (increased from 100)
+    marginx: 20,   // Graph margin
+    marginy: 20
+  });
 
+  // 使用节点的实际尺寸或估算尺寸
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: 250, height: 100 });
+    let nodeWidth: number;
+    let nodeHeight: number;
+
+    // 尝试获取实际渲染尺寸
+    const actualDimensions = getDimensions?.(node.id);
+    
+    if (actualDimensions) {
+      // 使用实际渲染尺寸，并添加padding以确保不重叠
+      // Add padding to ensure nodes don't overlap
+      nodeWidth = actualDimensions.width + 20;  // Add 20px horizontal padding
+      nodeHeight = actualDimensions.height + 20; // Add 20px vertical padding
+    } else {
+      // 回退到估算尺寸
+      const baseWidth = 280; // 最大宽度
+      const minWidth = 180;  // 最小宽度
+      
+      // 根据节点数据估算宽度
+      nodeWidth = node.data.label?.length > 10 ? baseWidth : minWidth;
+      
+      // 估算高度：折叠状态下高度更小
+      const isCollapsed = node.data.collapsed || false;
+      const headerHeight = 40;  // 头部高度
+      const contentHeight = isCollapsed ? 0 : 80; // 内容区高度
+      nodeHeight = headerHeight + contentHeight;
+    }
+    
+    dagreGraph.setNode(node.id, { 
+      width: nodeWidth, 
+      height: nodeHeight 
+    });
   });
 
   edges.forEach((edge) => {
@@ -94,11 +141,15 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => 
 
   const layoutedNodes = nodes.map((node) => {
     const nodeWithPosition = dagreGraph.node(node.id);
+    const nodeWidth = nodeWithPosition.width;
+    const nodeHeight = nodeWithPosition.height;
+    
     return {
       ...node,
       position: {
-        x: nodeWithPosition.x - 125,
-        y: nodeWithPosition.y - 50,
+        // Dagre 返回的是中心点位置，需要转换为左上角位置
+        x: nodeWithPosition.x - nodeWidth / 2,
+        y: nodeWithPosition.y - nodeHeight / 2,
       },
     };
   });
@@ -262,7 +313,30 @@ export const Flow: React.FC<FlowProps> = ({
 
   // 自动布局
   const onAutoLayout = useCallback(() => {
-    const layouted = getLayoutedElements(actualNodes, actualEdges, 'LR'); // 使用 LR (Left to Right)
+    // 获取节点的实际DOM尺寸
+    const getNodeDimensions = (nodeId: string) => {
+      // Try to find the node element by data-id attribute
+      const nodeElement = document.querySelector(`[data-id="${nodeId}"]`) as HTMLElement;
+      if (nodeElement) {
+        // Get the actual rendered size without transform effects
+        // Use offsetWidth/offsetHeight which gives the actual element size
+        const width = nodeElement.offsetWidth || nodeElement.getBoundingClientRect().width;
+        const height = nodeElement.offsetHeight || nodeElement.getBoundingClientRect().height;
+        
+        return {
+          width: Math.max(width, 180),  // Ensure minimum width
+          height: Math.max(height, 40), // Ensure minimum height
+        };
+      }
+      return null;
+    };
+    
+    const layouted = getLayoutedElements(
+      actualNodes, 
+      actualEdges, 
+      'LR', // 使用 LR (Left to Right)
+      getNodeDimensions
+    );
     
     if (!isControlled) {
       setNodes(layouted.nodes);
